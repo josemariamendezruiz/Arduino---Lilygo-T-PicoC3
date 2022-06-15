@@ -1,0 +1,59 @@
+/*
+    ARDUINO SENSOR DE TEMPERATURA Y HUMEDAD DHT11
+    AUTOR : JOSE MARIA MENDEZ RUIZ
+    JUNIO 2022
+    CODIGO LIBRE PARA UTILIZAR COMO QUIERAS
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+    NECESITAREMOS TENER INSTALADA LA LIBRERIA DHT DE ADAFRUIT, LA PUEDES DECARGAR DEL GESTOR DE LIBRERIAS
+    EN EL MENU DE ARRIBA VE A HERRAMIENTAS DENTRO ADMINISTRAR BIBLIOTECAS Y LA BUSCAS EN EL CUADRO DE BÚSQUEDA ESCRIBE DHT
+    DE LAS QUE TE SALEN BUSCA UNA QUE INDICA   By Adafruit       RECUERDA QUE DEBE SER LA LIBRERIA OFICIAL DE ADAFRUIT
+*/
+
+// INCLUIMOS LA LIBRERIA
+#include <DHT.h>
+
+// DECLARAMOS LAS VARIABLES QUE VAMOS A UTILIZAR
+int Pin_dht = 20;          // INDICAMOS EL PIN QUE UTILIZAMOS PARA CONECTARNOS AL SENSOR
+
+// CREAMOS EL OBJETO CON EL CUAL VAMOS A COMUNICARNOS CON EL SENSOR
+DHT dht(Pin_dht, DHT11);   // LO LLAMAMOS IGUAL QUE LA LIBRERIA PERO EN MINISCULAS, ASI SERA MAS FACIL SABER QUE NOS REFERIMOS AL SENSOR
+ 
+void setup()
+{
+  Serial.begin(9600);  // Abrimos comunicaciones
+  dht.begin();        // Iniciamos el sensor
+}
+
+void loop()
+{
+    float h = dht.readHumidity();                   // OBTENEMOS LA HUMEDAD RELATIVA
+    float c = dht.readTemperature();                // OBTENEMOS LA TEMPERATURA EN GRADOS CENTIGRADOS
+
+    // EN ESTE CASO SOLO SACAMOS LOS GRADOS EN EL VALOR DE GRADOS CENTIGRADOS, PERO TAMBIÉN PUEDES SACARLOS EN GRADOS FAHRENHEIT ASI :
+    // float f = dht.readTemperature(true);   
+
+    // COMPROBAMOS QUE NO HAY ERRORES DE COMUNICACION CON EL SENSOR, SI LOS HUBIERA INFORMAMOS AL USUARIO
+    if (isnan(h) || isnan(c) ) {
+      Serial.println("Error obteniendo los datos del sensor DHT11");
+      return;
+    }
+    Serial.print("Humedad: ");
+    Serial.print(h);
+    Serial.print(" %\c");
+    Serial.print("Temperatura: ");
+    Serial.print(c);
+    Serial.println(" *C ");
+    delay (1000); // Le ponemos una espera de un segundo entre lecturas, para no estar leyendo continuamente, esto lo podemos cambiar en caso de necesidad
+}
