@@ -1,0 +1,49 @@
+/*
+    SEMÁFORO SIMPLE
+    AUTOR : JOSE MARIA MENDEZ RUIZ
+    NOVIEMBRE 2022
+    CODIGO LIBRE PARA UTILIZAR COMO QUIERAS
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+int pin_rojo = 3;
+int pin_ambar = 4;
+int pin_verde = 5;
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode ( pin_rojo, OUTPUT );
+  pinMode ( pin_ambar, OUTPUT );
+  pinMode ( pin_verde, OUTPUT );
+  digitalWrite (pin_rojo, LOW );
+  digitalWrite (pin_ambar, LOW );
+  digitalWrite (pin_verde, LOW );
+}
+
+	void loop() {
+  // put your main code here, to run repeatedly:
+  int tiempo_rojo =  5000;
+  int tiempo_ambar = 2000;
+  int tiempo_verde = 5000;
+
+  digitalWrite (pin_rojo, HIGH);
+  delay(tiempo_rojo);
+  digitalWrite(pin_rojo, LOW);
+  digitalWrite(pin_verde, HIGH);
+  delay(tiempo_verde);
+  digitalWrite(pin_verde, LOW);
+  digitalWrite(pin_ambar, HIGH);
+  delay(tiempo_ambar);
+  digitalWrite(pin_ambar, LOW);
+}
