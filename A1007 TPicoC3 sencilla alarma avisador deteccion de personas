@@ -1,0 +1,52 @@
+/*
+    SENCILLA ALARMA ANTI INTRUSOS CON SENSOR DE MOVIMIENTO PIR RC-SR501
+    AUTOR : JOSE MARIA MENDEZ RUIZ
+    NOVIEMBRE 2022
+    CODIGO LIBRE PARA UTILIZAR COMO QUIERAS
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+ 
+ // DECLARAMOS LAS VARIABLES QUE INDICAN LOS PINES QUE VAMOS A UTILIZAR
+ 
+int led_calibrado  = 13;        // Este led parpadeará mientras el sensor se está calibrando
+int salida = 14;                // Pin de salida para cuando queremos activar algo , como una sirena
+int sensorpir = 15;             // Pin de entrada a nuestro microcontrolador , viene de la salida del sensor.
+int tiempo_calibracion = 30;    // Este tiempo es el que necesita el sensor cuando se enciende por primera vez, este valor está en el datasheet ( hoja de especificacione del fabricante )
+int tiempo_activacion = 5;      // Cuanto tiempo queremos que este activo cuando detecta presencia, por ejemplo cuanto tiempo queremos que esté sonando la alarma
+int j;                          // variable para bucles
+
+void setup()
+{
+  // Declaramos los pines que vamos a utilizar y el tipo que van a tener dichos pines
+
+  pinMode(sensorpir, INPUT); 
+  pinMode(salida, OUTPUT); 
+  pinMode(led_calibrado, OUTPUT); 
+
+  // ENCENDEMOS EL LED DE ESTA CALIBRANDO Y ESPERAMOS EL TIEMPO INDICADO POR EL FABRICANTE
+  digitalWrite(led_calibrado, HIGH);
+  for(j=0; j<tiempo_calibracion; j++){
+    delay(1000);
+  }
+  digitalWrite(led_calibrado, LOW); // Apago el led de calibracion y ya se puede usar
+}
+void loop()
+ {
+ if(digitalRead(sensorpir)== HIGH) // SI EL SENSOR DETECTA MOVIMIENTO
+  { 
+   digitalWrite(salida, HIGH);   // ACTIVAMOS LA SALIDA
+   delay(tiempo_activacion);	// TIEMPO QUE QUEREMOS QUE ESTE ACTIVA, POR EJEMPLO CUANTO TIEMPO VA A SONAR LA ALARMA
+   digitalWrite(salida , LOW);  // APAGAMOS LA SALIDA Y LO PONEMOS EN ESPERA POR SI EL SENSOR VUELVE A DETECTAR MOVIMIENTO
+  }
+}
