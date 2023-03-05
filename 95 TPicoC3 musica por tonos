@@ -1,0 +1,81 @@
+/*
+    MUSICA POR TONOS MUSICALES
+    MARZO 2023
+    CODIGO LIBRE PARA UTILIZAR COMO QUIERAS
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+ 
+int pin_musica = 12; // Pin por el que vamos a enviar las notas, recuerda que debe ser un pin PWM , si trabajas con el rp2040 usamos el GPIO12, si usas el ESP32-C3 indica el pin GPIO que vayas a utilizar
+
+// Definimos las frecuencias de las notas musicales, después solo tenemos que poner las notas de la partitura
+// Cuando es _S esa nota es sostenida
+// Cuando es _H esa nota es octava superior
+// Cuando es _SH esa nota es sostenida octava superior
+int Do=261; 
+int Do_H=523;
+int Do_SH=554;
+int Re=294;
+int Re_H=587;
+int Re_SH=622;
+int Mi=329;
+int Mi_H=659;
+int Fa=349;
+int Fa_H=698;
+int Fa_SH=740;
+int Sol=391;
+int Sol_S=415;
+int Sol_H=783;
+int Sol_SH=830;
+int La=440;
+int La_S=455;
+int La_H=880;
+int Si=466;
+
+// Los tiempos los voy a definir directamente por que este programa es para que aprendas lo básico, lo correcto sería tener en cuenta cuando son redondas, blanca, negras, corcheas , etc... y controlar correctamente el tiempo de cada nota
+// si haces esto podrás pasar cualquier partitura a este código, si lo haces compártelo para que todos puedan ver lo que haces.
+
+
+void setup() {
+  pinMode(pin_musica, OUTPUT);   // declaramos el pin como salida ( OUTPUT ), RECUERDA QUE TIENE QUE SER PWM
+}
+
+void loop() {
+  int melodia_star[] = {La,La,La,Fa,Do_H,La,Fa,Do_H,La,Mi_H,Mi_H,Mi_H,Fa_H,Do_H, Sol_S,Fa,Do_H,La,La_H,La,La,La_H,Sol_SH,Sol_H,Fa_SH,Fa_H,Fa_SH,La_S,Re_SH,Re_H,Do_SH,Do_H,Si,Do_H,Fa,Sol_S,Fa,La, Do_H,La,Do_H,Mi_H};
+  int duracion_star[] ={ 500,500,500,350,150,500,350,150,1000,500,500,500,350,150,500,350,150,1000,500,350,150,1000,500,350,150,500,250,250,125,125,250,250,500,250,250,125,125,250,125,500,375,125,500,375,125,1000};
+  int notas_star = 41; // numero total de notas musicales que tiene la canción
+
+  int melodia_alegria[] = {Si, Si , Do_H , Re_H , Re_H , Do_H , Si , La,Sol , Sol , La , Si , Si , La , La, Si , Si , Do_H , Re_H , Re_H , Do_H , Si , La, Sol , Sol , La , Si , La , Sol , Sol, La , La , Si , Sol ,La , Si , Do_H , Si , Sol ,La , Si , Do_H , Si , La, Sol , La , Re ,Si , Si , Do_H , Re_H , Re_H , Do_H , Si , La, Sol , Sol , La , Si , La , Sol , Sol };
+  int notas_alegria = 62; // numero total de notas musicales que tiene la canción
+  
+  // CANCION DE LA MARCHA DE STAR WARS 
+  for (int posicion = 0; posicion < notas_star; posicion++) {  
+    toca (melodia_star[posicion], duracion_star[posicion]);
+  }  
+  
+  delay (2000); // pausa de 2 segundos
+
+   // CANCION DEL HIMNO DE LA ALEGRIA, EN ESTE CASO NO HE CONTROLADO LOS TIEMPOS DE CADA NOTA, PARA QUE VEAS LA DIFERENCIA, UTILIZO PARA TODAS LA NOTAS MEDIO SEGUNDO, AUNQUE SI PRESTAS ATENCIÓN ENSEGUIDA TE DAS CUENTA DE QUE CANCIÓN ES.
+  for (int posicion = 0; posicion < notas_alegria; posicion++) {  
+    toca (melodia_alegria[posicion], 500);
+  }  
+}
+
+
+
+// FUNCION PARA SIMPLIFICAR LA REPRODUCCION DE UNA NOTA
+void toca(int nota,int duracion){
+    tone(pin_musica , nota, duracion);
+    delay(duracion + 40);
+    noTone(pin_musica);
+}
