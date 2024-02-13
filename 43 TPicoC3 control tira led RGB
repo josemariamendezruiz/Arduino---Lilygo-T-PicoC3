@@ -1,0 +1,94 @@
+/*
+    MANEJO DE TIRAS LED CON WS2812, USAREMOS DE LAS DOS MCU EL RP2040 
+    CODIGO ORIGINAL DE FASTLED
+    MODIFICADO POR : JOSE MARIA MENDEZ RUIZ
+    FEBRERO 2024
+    CODIGO LIBRE PARA UTILIZAR COMO QUIERAS
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+/*********************************************************************************************/
+/* A LA SALIA DEL PIN DE DATOS HACIA LA TIRA LED HAY QUE PONER UNA RESISTENCIA DE 470 OHMIOS */
+/*********************************************************************************************/
+
+   
+#include <FastLED.h>
+#include <Wire.h>
+
+// DECLARAMOS LAS VARIABLES Y CONSTANTES QUE VAMOS A UTILIZAR
+#define LED_PIN     20        // PIN DE DATOS PARA LA TIRA LED  !!! OJO  ESTAMOS UTILIZANDO LA MCU RP2040
+#define NUM_LEDS    30        // CANTIDAD DE LEDS QUE TIENE NUESTRA TIRA DE LEDS
+#define BRIGHTNESS  150       // BRILLO MAXIMO QUE VAMOS A UTILIZAR
+#define LED_TYPE    WS2812    // TIPO/MODELO DE LA TIRA QUE UTILIZAMOS
+#define COLOR_ORDER GRB       // ORDEN QUE VAMOS A UTILIZAR
+int velocidad = 1;            // VELOCIDAD DE CAMBIO 
+
+CRGB leds[NUM_LEDS];
+CRGBPalette16 currentPalette;
+TBlendType    currentBlending;
+
+void setup() {
+    FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+    FastLED.setBrightness( BRIGHTNESS );   
+    currentPalette = RainbowColors_p;
+    currentBlending = LINEARBLEND;
+}
+
+
+void loop()
+{
+    ChangePalettePeriodically();
+    
+    static uint8_t startIndex = 0;
+    startIndex = startIndex + 1;
+    
+    FillLEDsFromPaletteColors( startIndex);
+    
+    FastLED.show();
+    FastLED.delay(velocidad/100);
+    velocidad +=1;
+    if (velocidad > 2000) {velocidad = 1;}
+}
+
+void FillLEDsFromPaletteColors( uint8_t colorIndex)
+{
+    uint8_t brightness = 255;
+    
+    for( int i = 0; i < NUM_LEDS; ++i) {
+        leds[i] = ColorFromPalette( currentPalette, colorIndex, brightness, currentBlending);
+        colorIndex += 3;
+    }
+}
+
+void ChangePalettePeriodically()
+{
+    uint8_t secondHand = (millis() / 100) % 50;
+    static uint8_t lastSecond = 15;
+    
+    if( lastSecond != secondHand) {
+        lastSecond = secondHand;
+        if( secondHand ==  0)  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }
+        if( secondHand ==  5)  { currentPalette = RainbowStripeColors_p;   currentBlending = NOBLEND;  }
+        if( secondHand == 10)  { currentPalette = OceanColors_p;           currentBlending = LINEARBLEND; }
+        if( secondHand == 15)  { currentPalette = ForestColors_p;          currentBlending = LINEARBLEND; }
+    }
+}
+
+// Esta función crea una paleta de colores completamente aleatorios
+void SetupTotallyRandomPalette()
+{
+    for( int i = 0; i < 16; ++i) {
+        currentPalette[i] = CHSV( random8(), random8(), random8());
+    }
+}
